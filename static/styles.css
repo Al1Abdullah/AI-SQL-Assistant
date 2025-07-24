@@ -1,0 +1,90 @@
+body { background-color: #f8f9fa; }
+.container { max-width: 900px; margin-top: 20px; }
+.schema-box, .query-box, .table-editor { 
+    background-color: #fff; 
+    padding: 20px; 
+    border-radius: 8px; 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+    margin-bottom: 20px; 
+}
+.query-box { display: block; }
+.query-content { display: none; }
+.toggle-button { 
+    background-color: #007bff; 
+    color: white; 
+    border: none; 
+    padding: 8px 15px; 
+    border-radius: 5px; 
+    cursor: pointer; 
+    font-weight: 500; 
+    font-size: 0.9rem; 
+    width: auto; 
+    display: inline-block; 
+}
+.toggle-button:hover { 
+    background-color: #0056b3; 
+}
+.result-table, .table-editor { margin-top: 20px; }
+.error { color: #dc3545; font-weight: 500; }
+.note { font-style: italic; color: #6c757d; }
+.highlight { 
+    background-color: #28a745; 
+    color: white; 
+    padding: 2px 8px; 
+    border-radius: 4px; 
+    font-weight: 600; 
+}
+.highlight-warning { 
+    background-color: #fd7e14; 
+}
+.schema-summary h4 { margin-bottom: 10px; }
+.schema-summary ul { margin-bottom: 15px; }
+.schema-summary li { margin-bottom: 5px; }
+.table { 
+    border-radius: 8px; 
+    overflow: hidden; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+}
+.table thead th { 
+    background-color: #007bff; 
+    color: white; 
+    font-weight: 600; 
+    text-transform: capitalize; 
+    padding: 12px; 
+}
+.table tbody tr:nth-child(even) { 
+    background-color: #f8f9fa; 
+}
+.table tbody tr:hover { 
+    background-color: #e9ecef; 
+    transition: background-color 0.2s; 
+}
+.table td { 
+    padding: 12px; 
+    vertical-align: middle; 
+}
+.table td[contenteditable="true"] { 
+    background-color: #fff3cd; 
+    cursor: text; 
+}
+.btn-primary { 
+    background-color: #007bff; 
+    border-color: #007bff; 
+    padding: 10px 20px; 
+}
+.btn-primary:hover { 
+    background-color: #0056b3; 
+    border-color: #0056b3; 
+}
+.btn-danger:hover { 
+    background-color: #c82333; 
+    border-color: #c82333; 
+}
+.btn-success:hover { 
+    background-color: #218838; 
+    border-color: #218838; 
+}
+.form-control { 
+    border-radius: 5px; 
+}
+.unpaid { color: #dc3545; font-weight: bold; }
