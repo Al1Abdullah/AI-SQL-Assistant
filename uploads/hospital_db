@@ -1,0 +1,209 @@
+-- This is sample db file you can use any db file, but it should be structured, proper 3nf relations and ordered well to perform and get accurate responses.
+
+DROP DATABASE IF EXISTS hospital_db;
+CREATE DATABASE hospital_db;
+USE hospital_db;
+
+-- 1. Department
+CREATE TABLE department (
+  dept_id INT PRIMARY KEY,
+  name VARCHAR(50),
+  location VARCHAR(50)
+);
+INSERT INTO department VALUES
+(1,'Cardiology','Building A'),
+(2,'Neurology','Building B'),
+(3,'Pediatrics','Building C'),
+(4,'Oncology','Building D'),
+(5,'Orthopedics','Building E'),
+(6,'Emergency','Building A'),
+(7,'Radiology','Building B'),
+(8,'Pathology','Building C'),
+(9,'Dermatology','Building D'),
+(10,'Urology','Building E');
+
+-- 2. Doctor
+CREATE TABLE doctor (
+  doc_id INT PRIMARY KEY,
+  first_name VARCHAR(30),
+  last_name VARCHAR(30),
+  dept_id INT,
+  email VARCHAR(50),
+  phone VARCHAR(20),
+  FOREIGN KEY (dept_id) REFERENCES department(dept_id)
+);
+INSERT INTO doctor VALUES
+(1,'Sara','Ahmed',1,'sara.ahmed@hospital.com','555-0101'),
+(2,'Omar','Khan',2,'omar.khan@hospital.com','555-0102'),
+(3,'Aisha','Ali',3,'aisha.ali@hospital.com','555-0103'),
+(4,'Bilal','Hussain',4,'bilal.hussain@hospital.com','555-0104'),
+(5,'Zainab','Farooq',5,'zainab.farooq@hospital.com','555-0105'),
+(6,'Ahmad','Yousaf',6,'ahmad.yousaf@hospital.com','555-0106'),
+(7,'Fariha','Javed',7,'fariha.javed@hospital.com','555-0107'),
+(8,'Kamran','Rizvi',8,'kamran.rizvi@hospital.com','555-0108'),
+(9,'Mira','Saeed',9,'mira.saeed@hospital.com','555-0109'),
+(10,'Usman','Iqbal',10,'usman.iqbal@hospital.com','555-0110');
+
+-- 3. Patient
+CREATE TABLE patient (
+  patient_id INT PRIMARY KEY,
+  first_name VARCHAR(30),
+  last_name VARCHAR(30),
+  dob DATE,
+  gender VARCHAR(10),
+  phone VARCHAR(20),
+  address VARCHAR(100)
+);
+INSERT INTO patient VALUES
+(1,'Hassan','Malik','1980-02-15','Male','555-0201','12 Baker St, City'),
+(2,'Mariam','Niazi','1990-05-22','Female','555-0202','34 Elm Rd, City'),
+(3,'Ali','Fatima','1975-07-10','Male','555-0203','56 Pine St, City'),
+(4,'Sara','Nasir','2000-12-01','Female','555-0204','78 Oak Ave, City'),
+(5,'Farah','Khan','1985-11-11','Female','555-0205','90 Maple Dr, City'),
+(6,'Bilal','Zafar','1995-03-05','Male','555-0206','121 Cedar Rd, City'),
+(7,'Ayesha','Raza','1978-04-20','Female','555-0207','143 Birch St, City'),
+(8,'Usman','Shahid','1982-08-30','Male','555-0208','165 Walnut Ln, City'),
+(9,'Laila','Imran','1998-09-17','Female','555-0209','187 Chestnut Ct, City'),
+(10,'Zara','Yasir','2003-01-25','Female','555-0210','209 Poplar Blvd, City');
+
+-- 4. Appointment
+CREATE TABLE appointment (
+  appt_id INT PRIMARY KEY,
+  patient_id INT,
+  doc_id INT,
+  appt_date DATE,
+  appt_time TIME,
+  reason VARCHAR(100),
+  FOREIGN KEY (patient_id) REFERENCES patient(patient_id),
+  FOREIGN KEY (doc_id) REFERENCES doctor(doc_id)
+);
+INSERT INTO appointment VALUES
+(1,1,1,'2025-07-01','09:00:00','Chest pain'),
+(2,2,2,'2025-07-02','10:30:00','Headache'),
+(3,3,3,'2025-07-03','11:00:00','Fever'),
+(4,4,4,'2025-07-04','14:00:00','Follow-up'),
+(5,5,5,'2025-07-05','15:30:00','Back pain'),
+(6,6,6,'2025-07-06','08:30:00','Injury'),
+(7,7,7,'2025-07-07','13:00:00','X-ray review'),
+(8,8,8,'2025-07-08','09:45:00','Blood test'),
+(9,9,9,'2025-07-09','10:15:00','Skin rash'),
+(10,10,10,'2025-07-10','11:30:00','Urinary issues');
+
+-- 5. Prescription
+CREATE TABLE prescription (
+  presc_id INT PRIMARY KEY,
+  appt_id INT,
+  med_name VARCHAR(50),
+  dosage VARCHAR(30),
+  duration VARCHAR(30),
+  FOREIGN KEY (appt_id) REFERENCES appointment(appt_id)
+);
+INSERT INTO prescription VALUES
+(1,1,'Aspirin','75 mg','7 days'),
+(2,2,'Ibuprofen','200 mg','5 days'),
+(3,3,'Paracetamol','500 mg','5 days'),
+(4,4,'Amoxicillin','500 mg','10 days'),
+(5,5,'Voltaren','50 mg','14 days'),
+(6,6,'Ciprofloxacin','250 mg','7 days'),
+(7,7,'Xylometazoline','0.1%','3 days'),
+(8,8,'Atorvastatin','10 mg','30 days'),
+(9,9,'Hydrocortisone cream','1%','7 days'),
+(10,10,'Nitrofurantoin','100 mg','7 days');
+
+-- 6. Bill
+CREATE TABLE bill (
+  bill_id INT PRIMARY KEY,
+  appt_id INT,
+  amount DECIMAL(8,2),
+  bill_date DATE,
+  status VARCHAR(20),
+  FOREIGN KEY (appt_id) REFERENCES appointment(appt_id)
+);
+INSERT INTO bill VALUES
+(1,1,200.00,'2025-07-01','Paid'),
+(2,2,150.00,'2025-07-02','Unpaid'),
+(3,3,100.00,'2025-07-03','Paid'),
+(4,4,80.00,'2025-07-04','Paid'),
+(5,5,180.00,'2025-07-05','Unpaid'),
+(6,6,220.00,'2025-07-06','Paid'),
+(7,7,50.00,'2025-07-07','Paid'),
+(8,8,60.00,'2025-07-08','Unpaid'),
+(9,9,90.00,'2025-07-09','Paid'),
+(10,10,120.00,'2025-07-10','Unpaid');
+
+-- 7. Room
+CREATE TABLE room (
+  room_id INT PRIMARY KEY,
+  room_no VARCHAR(10),
+  dept_id INT,
+  capacity INT,
+  FOREIGN KEY (dept_id) REFERENCES department(dept_id)
+);
+INSERT INTO room VALUES
+(1,'A101',1,2),(2,'B201',2,2),(3,'C301',3,2),(4,'D401',4,2),
+(5,'E501',5,2),(6,'A102',6,4),(7,'B202',7,2),(8,'C302',8,2),
+(9,'D402',9,2),(10,'E502',10,2);
+
+-- 8. Admission
+CREATE TABLE admission (
+  adm_id INT PRIMARY KEY,
+  patient_id INT,
+  room_id INT,
+  adm_date DATE,
+  discharge_date DATE,
+  FOREIGN KEY (patient_id) REFERENCES patient(patient_id),
+  FOREIGN KEY (room_id) REFERENCES room(room_id)
+);
+INSERT INTO admission VALUES
+(1,1,1,'2025-06-28','2025-07-02'),
+(2,2,2,'2025-06-29','2025-07-03'),
+(3,3,3,'2025-06-30','2025-07-04'),
+(4,4,4,'2025-07-01','2025-07-05'),
+(5,5,5,'2025-07-02','2025-07-06'),
+(6,6,6,'2025-07-03','2025-07-07'),
+(7,7,7,'2025-07-04','2025-07-08'),
+(8,8,8,'2025-07-05','2025-07-09'),
+(9,9,9,'2025-07-06','2025-07-10'),
+(10,10,10,'2025-07-07','2025-07-11');
+
+-- 9. Nurse
+CREATE TABLE nurse (
+  nurse_id INT PRIMARY KEY,
+  first_name VARCHAR(30),
+  last_name VARCHAR(30),
+  dept_id INT,
+  phone VARCHAR(20),
+  FOREIGN KEY (dept_id) REFERENCES department(dept_id)
+);
+INSERT INTO nurse VALUES
+(1,'Hina','Nadeem',1,'555-0301'),
+(2,'Javed','Iqbal',2,'555-0302'),
+(3,'Rabia','Shah',3,'555-0303'),
+(4,'Farooq','Aslam',4,'555-0304'),
+(5,'Sana','Yousaf',5,'555-0305'),
+(6,'Tahir','Riaz',6,'555-0306'),
+(7,'Mehwish','Ahmed',7,'555-0307'),
+(8,'Shaun','Khan',8,'555-0308'),
+(9,'Amina','Raza',9,'555-0309'),
+(10,'Naveed','Aziz',10,'555-0310');
+
+-- 10. Nurse_Assignment (linking nurse to patient during admission)
+CREATE TABLE nurse_assignment (
+  na_id INT PRIMARY KEY,
+  adm_id INT,
+  nurse_id INT,
+  assigned_date DATE,
+  FOREIGN KEY (adm_id) REFERENCES admission(adm_id),
+  FOREIGN KEY (nurse_id) REFERENCES nurse(nurse_id)
+);
+INSERT INTO nurse_assignment VALUES
+(1,1,1,'2025-06-28'),
+(2,2,2,'2025-06-29'),
+(3,3,3,'2025-06-30'),
+(4,4,4,'2025-07-01'),
+(5,5,5,'2025-07-02'),
+(6,6,6,'2025-07-03'),
+(7,7,7,'2025-07-04'),
+(8,8,8,'2025-07-05'),
+(9,9,9,'2025-07-06'),
+(10,10,10,'2025-07-07');
