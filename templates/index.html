@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI SQL Assistant</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/styles.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mb-4">AI SQL Assistant</h1>
+        {% if session.db_name %}
+        <div class="alert alert-info text-center">Current Database: <strong>{{ session.db_name }}</strong></div>
+        {% endif %}
+        
+        <!-- SQL File Upload -->
+        <form id="upload-form" method="post" action="/upload" enctype="multipart/form-data" class="mb-4">
+            <div class="mb-3">
+                <label for="sql_file" class="form-label">Upload MySQL .sql File</label>
+                <input type="file" class="form-control" id="sql_file" name="sql_file" accept=".sql">
+            </div>
+            <button type="submit" class="btn btn-primary" name="upload-btn" value="1">Upload</button>
+        </form>
+
+        <!-- Schema Summary -->
+        {% if summary %}
+        <div class="schema-box">
+            <h3>Database Summary</h3>
+            <div class="schema-summary">
+                <h4>Overview</h4>
+                <p>{{ summary.description }}</p>
+                <h4>Main Tables and Columns</h4>
+                <ul>
+                    {% for table, columns in summary.main_tables.items() %}
+                    <li><strong>{{ table }}</strong>: {{ columns | join(', ') }}</li>
+                    {% endfor %}
+                </ul>
+                <h4>Key Relationships</h4>
+                <ul>
+                    {% for relation in summary.relationships %}
+                    <li>{{ relation }}</li>
+                    {% endfor %}
+                </ul>
+                <h4>Suggestions</h4>
+                <p><span class="highlight {% if summary.suggestions.evaluation != 'Excellent' %}highlight-warning{% endif %}">{{ summary.suggestions.evaluation }}</span></p>
+                <p>{{ summary.suggestions.note }}</p>
+                <ul>
+                    {% for rec in summary.suggestions.recommendations %}
+                    <li>{{ rec }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Table Editor -->
+        <div class="table-editor mt-4">
+            <h3>Table Editor</h3>
+            <select id="table-select" class="form-select mb-3" onchange="loadTableData()">
+                <option value="">Select a table</option>
+                {% for table in tables %}
+                <option value="{{ table }}">{{ table }}</option>
+                {% endfor %}
+            </select>
+            <div id="table-error" class="error mb-3"></div>
+            <table id="table-data" class="table table-bordered">
+                <thead><tr></tr></thead>
+                <tbody></tbody>
+            </table>
+            <div class="mb-3">
+                <button class="btn btn-primary me-2" onclick="insertRow()">Insert Row</button>
+                <input type="number" id="delete-row-index" class="form-control d-inline-block w-auto me-2" placeholder="Row Index to Delete">
+                <button class="btn btn-danger" onclick="deleteRow()">Delete Row</button>
+                <button class="btn btn-success ms-2" onclick="updateTable()">Update Table</button>
+            </div>
+        </div>
+
+        <!-- Query Editor -->
+        <form id="query-form" method="post" class="mt-4">
+            <div class="mb-3">
+                <label for="question" class="form-label">Ask a Question or Enter SQL Query</label>
+                <input type="text" class="form-control" id="question" name="question" placeholder="e.g., Show all departments or SELECT * FROM Department">
+                <label class="mt-2"><input type="checkbox" id="is-natural-language" name="is_natural_language"> Natural Language Query</label>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+        <div id="ai-sql-response" class="mt-3"></div>
+
+        <!-- Query Results -->
+        <div class="result-table mt-3">
+            <h4>Query Results</h4>
+            <table id="query-result" class="table table-bordered">
+                <thead><tr></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        {% if error %}
+        <p class="error mt-3">{{ error }}</p>
+        {% endif %}
+        {% if query %}
+        <div class="query-box mt-3">
+            <button class="toggle-button" onclick="toggleSection('query-content')">View SQL Query</button>
+            <div id="query-content" class="query-content">
+                <pre class="bg-light p-3 rounded">{{ query }}</pre>
+            </div>
+        </div>
+        {% endif %}
+        {% if results %}
+        <div class="result-table mt-3">
+            <h4>Query Results</h4>
+            <table id="query-result" class="table table-bordered">
+                <thead>
+                    <tr>
+                        {% for key in results[0].keys() %}
+                        <th>{{ key }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in results %}
+                    <tr>
+                        {% for key, value in row.items() %}
+                        <td {% if key in ['Total Bill Amount', 'Bill Amount'] %}class="unpaid"{% endif %}>{{ value }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% elif query and not error %}
+        <p class="note mt-3">No results found for the query. Check the data or try a different question.</p>
+        {% endif %}
+    </div>
+
+    <script src="/static/scripts.js"></script>
+</body>
+</html>
